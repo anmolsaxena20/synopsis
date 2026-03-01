@@ -3,7 +3,7 @@ const { v4: uuid } = require('uuid')
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_key:  process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
@@ -13,7 +13,7 @@ async function getUploadSignature(fileName) {
 
   const paramsToSign = {
     public_id: publicId,
-    timestamp: timestamp,
+    timestamp:timestamp,
   }
 
   const signature = cloudinary.utils.api_sign_request(
@@ -26,7 +26,7 @@ async function getUploadSignature(fileName) {
     timestamp,
     publicId,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey:    process.env.CLOUDINARY_API_KEY,
+    apiKey: process.env.CLOUDINARY_API_KEY,
   }
 }
 

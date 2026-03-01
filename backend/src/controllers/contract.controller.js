@@ -88,7 +88,7 @@ async function deleteContract(req, res) {
   try {
     const contract = await prisma.contract.findFirst({
       where: {
-        id:        req.params.id,
+        id:   req.params.id,
         companyId: req.user.companyId,
       },
     })

@@ -12,9 +12,9 @@ function authenticate(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
     req.user = {
-      id:        decoded.id,
-      email:     decoded.email,
-      role:      decoded.role,
+      id: decoded.id,
+      email:  decoded.email,
+      role:  decoded.role,
       companyId: decoded.companyId,
     }
 
