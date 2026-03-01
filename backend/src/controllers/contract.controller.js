@@ -1,20 +1,20 @@
 const prisma     = require('../lib/prisma')
-const s3Service  = require('../services/s3.service')
+const storageService = require('../services/storage.service')
 const aiService  = require('../services/ai.service')
 
 async function getPresignedUrl(req, res) {
   try {
-    const { fileName, fileType } = req.query
+    const { fileName } = req.query
 
     if (!fileName) {
       return res.status(400).json({ error: 'fileName is required' })
     }
 
-    const { uploadUrl, s3Key } = await s3Service.createPresignedUrl(fileName, fileType)
-    res.json({ uploadUrl, s3Key })
+    const uploadData = await storageService.getUploadSignature(fileName)
+    res.json(uploadData)
   } catch (err) {
     console.error('Presign error:', err)
-    res.status(500).json({ error: 'Failed to generate upload URL' })
+    res.status(500).json({ error: 'Failed to generate upload signature' })
   }
 }
 
