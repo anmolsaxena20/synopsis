@@ -156,6 +156,8 @@ export default function DashboardPage() {
   const LAST_CONTRACT_KEY = 'lastDashboardContractId'
   const emptyDonePollsRef = useRef(0)
   const MAX_EMPTY_DONE_POLLS = 10
+  const processingPollsRef = useRef(0)
+  const MAX_PROCESSING_POLLS = 40
 
   const [contract, setContract] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -199,6 +201,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!contractId) return
     emptyDonePollsRef.current = 0
+    processingPollsRef.current = 0
     const timer = setTimeout(() => {
       fetchContract()
     }, 0)
@@ -212,7 +215,14 @@ export default function DashboardPage() {
         const res = await api.get(`/contracts/${contractId}`)
         setContract(res.data)
 
-        if (res.data.status === 'PROCESSING' || res.data.status === 'PENDING') return
+        if (res.data.status === 'PROCESSING' || res.data.status === 'PENDING') {
+          processingPollsRef.current += 1
+          if (processingPollsRef.current < MAX_PROCESSING_POLLS) return
+          setPolling(false)
+          setLoading(false)
+          clearInterval(interval)
+          return
+        }
 
         if (res.data.status === 'DONE' && !hasClauseData(res.data)) {
           emptyDonePollsRef.current += 1
@@ -288,6 +298,43 @@ export default function DashboardPage() {
         <h2 className="text-xl font-bold text-gray-900 mb-2">Analysis failed</h2>
         <p className="text-sm text-gray-500 mb-6">{contract?.errorMessage || 'Something went wrong during analysis.'}</p>
         <button onClick={() => navigate('/app/upload')} className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all">Try Again</button>
+      </div>
+    )
+  }
+
+  if (contract.status === 'PROCESSING' || contract.status === 'PENDING') {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 text-center">
+        <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mb-5">
+          <svg className="animate-spin w-9 h-9" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#2563eb" strokeOpacity="0.25" strokeWidth="3" />
+            <path d="M12 2a10 10 0 0110 10" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Analysis is still running</h2>
+        <p className="text-sm text-gray-500 mb-6 max-w-md">
+          This contract is taking longer than usual to process. You can refresh status now or check again from History.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              processingPollsRef.current = 0
+              emptyDonePollsRef.current = 0
+              setLoading(true)
+              setPolling(true)
+              fetchContract()
+            }}
+            className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all"
+          >
+            Refresh Status
+          </button>
+          <button
+            onClick={() => navigate('/app/history')}
+            className="px-5 py-2.5 border border-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-all"
+          >
+            Go to History
+          </button>
+        </div>
       </div>
     )
   }
