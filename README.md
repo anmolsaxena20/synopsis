@@ -2,7 +2,7 @@
 
 > AI-powered contract risk analysis for procurement and legal teams. Upload any vendor PDF and get a full structured risk report in under 60 seconds.
 
-![ContractScan AI](https://img.shields.io/badge/Powered%20by-Gemini%202.0%20Flash-blue?style=flat-square)
+![ContractScan AI](https://img.shields.io/badge/Powered%20by-Groq%20Llama%203.3%2070B-blue?style=flat-square)
 ![Stack](https://img.shields.io/badge/Stack-React%20%2B%20Node.js%20%2B%20Python-green?style=flat-square)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20%28Supabase%29-orange?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)
@@ -68,7 +68,7 @@ ContractScan AI analyzes any vendor PDF in under 60 seconds, identifies 17+ clau
 |---|---|
 | Frontend | React 18, Vite, Tailwind CSS v4, Recharts |
 | Backend | Node.js, Express, Prisma ORM |
-| AI Service | Python, FastAPI, Gemini 2.0 Flash |
+| AI Service | Python, FastAPI, Groq (Llama 3.3 70B via OpenAI-compatible API) |
 | Database | PostgreSQL (Supabase) |
 | File Storage | Cloudinary |
 | Auth | JWT (JSON Web Tokens) |
@@ -119,10 +119,7 @@ contractscan/
 │   ├── .env
 │   └── package.json
 │
-└── ai-service/                # Python FastAPI AI service
-    ├── main.py
-    ├── requirements.txt
-    └── .env
+└── ai/                        # Python FastAPI AI service`r`n    app/`r`n      main.py`r`n      services/`r`n      models/`r`n      prompts/`r`n    requirements.txt`r`n    .env
 ```
 
 ---
@@ -135,7 +132,7 @@ contractscan/
 - Python 3.11+
 - PostgreSQL database (Supabase recommended)
 - Cloudinary account
-- Google AI Studio account (for Gemini API key)
+- Groq account (for API key)
 
 ---
 
@@ -195,18 +192,14 @@ Frontend runs on `http://localhost:5173`
 ### 4. AI Service Setup
 
 ```bash
-cd ai-service
+cd ai
 pip install -r requirements.txt
 ```
 
-Create `.env` file:
-```
-GEMINI_API_KEY=your_gemini_api_key
-PORT=8000
-```
+Create `.env` file:`r`n``` `r`nGROQ_API_KEY=your_groq_api_key`r`nMODEL=llama-3.3-70b-versatile`r`nMAX_TOKENS=4000`r`nALLOW_HEURISTIC_FALLBACK=false`r`nAI_PORT=8000`r`n```
 
 ```bash
-uvicorn main:app --reload --port 8000
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
 AI service runs on `http://localhost:8000`
@@ -244,12 +237,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 VITE_API_BASE_URL=http://localhost:4000/api
 ```
 
-### AI Service `.env`
-
-```env
-GEMINI_API_KEY=your_gemini_api_key
-PORT=8000
-```
+### AI Service `.env` `r`n`r`n```env`r`nGROQ_API_KEY=your_groq_api_key`r`nMODEL=llama-3.3-70b-versatile`r`nMAX_TOKENS=4000`r`nALLOW_HEURISTIC_FALLBACK=false`r`nAI_PORT=8000`r`n```
 
 ---
 
@@ -289,8 +277,8 @@ The AI service is a Python FastAPI application that:
 
 1. Receives `POST /analyze` with `{ contract_id, s3_key }`
 2. Downloads the PDF from Cloudinary
-3. Extracts text using `pdfminer.six`
-4. Sends text to Gemini 2.0 Flash with a structured risk analysis prompt
+3. Extracts text using `pypdf`
+4. Sends text to Groq (`llama-3.3-70b-versatile`) with a structured risk analysis prompt
 5. Returns structured JSON with risk scores, red flags, and clause analysis
 6. Backend saves results to database
 
@@ -370,7 +358,7 @@ cd backend && npm run dev
 cd frontend && npm run dev
 
 # Terminal 3 — AI Service
-cd ai-service && uvicorn main:app --reload
+cd ai && python -m uvicorn app.main:app --reload --port 8000
 ```
 
 Then open `http://localhost:5173`
@@ -385,7 +373,7 @@ Built at Hackathon 2026 🏆
 |---|---|
 | Full Stack / Backend | Node.js API, Database, Auth, Cloudinary |
 | Frontend | React, UI/UX, Dashboard, Landing Page |
-| AI Engineer | Python FastAPI, Gemini Integration, PDF Extraction |
+| AI Engineer | Python FastAPI, Groq Integration, PDF Extraction |
 
 ---
 
@@ -396,3 +384,6 @@ MIT License — built for hackathon purposes.
 ---
 
 *ContractScan AI — Know your contract risks before you sign.*
+
+
+
