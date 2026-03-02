@@ -145,7 +145,7 @@ export default function Layout() {
   function handleLogout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    navigate('/auth')
+    navigate('/')
   }
 
   return (

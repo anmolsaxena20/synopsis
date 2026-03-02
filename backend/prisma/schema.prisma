@@ -13,8 +13,8 @@ model Company {
   domain    String?    @unique
   plan      String     @default("STARTER")
   createdAt DateTime   @default(now())
-  users     User[]
   contracts Contract[]
+  users     User[]
 }
 
 model User {
@@ -24,8 +24,8 @@ model User {
   name         String
   role         String   @default("MEMBER")
   companyId    String
-  company      Company  @relation(fields: [companyId], references: [id])
   createdAt    DateTime @default(now())
+  company      Company  @relation(fields: [companyId], references: [id])
 }
 
 model Contract {
@@ -39,20 +39,20 @@ model Contract {
   status           String    @default("PENDING")
   errorMessage     String?
   companyId        String
-  company          Company   @relation(fields: [companyId], references: [id])
   uploadedAt       DateTime  @default(now())
   processedAt      DateTime?
   clauses          Clause[]
+  company          Company   @relation(fields: [companyId], references: [id])
 }
 
 model Clause {
   id                        String   @id @default(uuid())
   contractId                String
-  contract                  Contract @relation(fields: [contractId], references: [id])
   clauseType                String
   extractedText             String
   riskLevel                 String
   explanation               String
   negotiationRecommendation String
   createdAt                 DateTime @default(now())
+  contract                  Contract @relation(fields: [contractId], references: [id])
 }

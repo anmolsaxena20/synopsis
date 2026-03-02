@@ -311,29 +311,29 @@ export default function AuthPage() {
           </p>
         </div>
 
-        <div className="hidden lg:flex bg-slate-900 text-slate-100 p-10 border-l border-slate-800 flex-col justify-between">
+        <div className="hidden lg:flex bg-gradient-to-b from-blue-50 to-slate-100 text-slate-800 p-10 border-l border-slate-200 flex-col justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.15em] text-slate-400 font-semibold mb-4">
+            <p className="text-xs uppercase tracking-[0.15em] text-slate-500 font-semibold mb-4">
               Legal Operations Platform
             </p>
             <h2 className="text-2xl font-semibold leading-tight">
               Enterprise-grade contract risk workflow for procurement teams.
             </h2>
-            <p className="mt-4 text-sm text-slate-300 leading-relaxed">
+            <p className="mt-4 text-sm text-slate-600 leading-relaxed">
               Review vendor terms faster, keep your legal position consistent, and maintain shared institutional context across every contract decision.
             </p>
           </div>
 
           <div className="space-y-3">
             {trustPoints.map((item) => (
-              <div key={item} className="flex items-start gap-2.5 border border-slate-700 rounded-lg px-3.5 py-3 bg-slate-800/45">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
-                <p className="text-sm text-slate-200">{item}</p>
+              <div key={item} className="flex items-start gap-2.5 border border-blue-100 rounded-lg px-3.5 py-3 bg-white/70">
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                <p className="text-sm text-slate-700">{item}</p>
               </div>
             ))}
           </div>
 
-          <p className="text-xs text-slate-400 border-t border-slate-800 pt-5">
+          <p className="text-xs text-slate-500 border-t border-slate-200 pt-5">
             Trusted by procurement and legal teams at growth-stage companies.
           </p>
         </div>
