@@ -62,6 +62,78 @@ const NAV_ITEMS = [
   { label: 'Team',             icon: Icons.Team,      to: '/app/team'      },
 ]
 
+function TopbarAvatar({ user, initials, onLogout }) {
+  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-all duration-150"
+      >
+        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+          {initials}
+        </div>
+        <span className="text-sm font-medium text-gray-700 hidden sm:block">{user.name}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden"
+            style={{ animation: 'fadeUp 0.15s ease-out' }}>
+            <div className="px-4 py-3 border-b border-gray-100">
+              <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
+              <p className="text-xs text-gray-400 truncate mt-0.5">{user.email}</p>
+            </div>
+            <div className="py-1">
+              <button
+                onClick={() => { setOpen(false); navigate('/app/profile') }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                My Profile
+              </button>
+              <button
+                onClick={() => { setOpen(false); navigate('/app/team') }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                  <path d="M16 3.13a4 4 0 010 7.75" />
+                </svg>
+                Team
+              </button>
+            </div>
+            <div className="border-t border-gray-100 py-1">
+              <button
+                onClick={() => { setOpen(false); onLogout() }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors duration-150"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 export default function Layout() {
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
@@ -170,10 +242,7 @@ export default function Layout() {
               <Icons.Bell />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
             </button>
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-              {initials}
-            </div>
-            <span className="text-sm font-medium text-gray-700 hidden sm:block">{user.name}</span>
+            <TopbarAvatar user={user} initials={initials} onLogout={handleLogout} />
           </div>
         </header>
 
@@ -181,6 +250,12 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }

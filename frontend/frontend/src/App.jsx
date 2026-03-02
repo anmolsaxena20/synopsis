@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage'
 import TeamPage from './pages/TeamPage'
 import Layout from './components/Layout'
 import LandingPage from './pages/LandingPage'
+import ProfilePage from './pages/ProfilePage'
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token')
@@ -32,6 +33,7 @@ function AppRoutes() {
         <Route path="upload" element={<UploadPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="team" element={<TeamPage />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

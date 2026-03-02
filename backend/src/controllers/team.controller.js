@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs')
 const prisma = require('../lib/prisma')
 
 async function getMembers(req, res) {
@@ -53,4 +54,45 @@ async function inviteMember(req, res) {
   }
 }
 
-module.exports = { getMembers, inviteMember }
+async function updateProfile(req, res) {
+  try {
+    const { name } = req.body
+    if (!name) return res.status(400).json({ error: 'Name is required' })
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { name: name.trim() },
+    })
+
+    res.json({ message: 'Profile updated' })
+  } catch (err) {
+    console.error('Update profile error:', err)
+    res.status(500).json({ error: 'Failed to update profile' })
+  }
+}
+
+async function changePassword(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'All fields are required' })
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } })
+    const isValid = await bcrypt.compare(currentPassword, user.passwordHash)
+    if (!isValid) return res.status(400).json({ error: 'Current password is incorrect' })
+
+    const passwordHash = await bcrypt.hash(newPassword, 10)
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { passwordHash },
+    })
+
+    res.json({ message: 'Password changed' })
+  } catch (err) {
+    console.error('Change password error:', err)
+    res.status(500).json({ error: 'Failed to change password' })
+  }
+}
+
+module.exports = { getMembers, inviteMember, updateProfile, changePassword }
