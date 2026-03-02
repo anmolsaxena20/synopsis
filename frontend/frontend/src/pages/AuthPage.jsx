@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import LandingPage from './LandingPage'
 
+function toErrorMessage(err, fallback = 'Something went wrong. Please try again.') {
+  const payload = err?.response?.data
+
+  if (typeof payload?.error === 'string') return payload.error
+  if (typeof payload?.error?.message === 'string') return payload.error.message
+  if (typeof payload?.message === 'string') return payload.message
+  if (typeof err?.message === 'string') return err.message
+
+  return fallback
+}
+
 function InputField({ label, type = 'text', placeholder, value, onChange, error }) {
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
@@ -108,7 +119,7 @@ export default function AuthPage() {
         navigate('/app/dashboard')
       }
     } catch (err) {
-      setApiError(err.response?.data?.error || 'Something went wrong. Please try again.')
+      setApiError(toErrorMessage(err))
     } finally {
       setLoading(false)
     }
