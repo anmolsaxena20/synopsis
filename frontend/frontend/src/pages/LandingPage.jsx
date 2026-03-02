@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import contractHero from '../assets/contract-hero.png'
 
 function Logo({ white = false }) {
   return (
@@ -120,21 +121,25 @@ export default function LandingPage() {
       </header>
 
       <main>
-        <section className="max-w-6xl mx-auto px-6 pt-16 pb-10">
+        <section className="relative max-w-6xl mx-auto px-6 pt-16 pb-10">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-gray-50 to-gray-50 -z-10 pointer-events-none" />
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            <div className="animate-fade-up">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-3 py-1.5 mb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-50/90 border border-blue-100 rounded-full px-3 py-1.5 mb-5 animate-fade-up">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 AI contract intelligence for procurement and legal
               </div>
-              <h1 className="text-4xl md:text-5xl font-extrabold leading-[1.1] tracking-tight">
-                Know your contract risks before you sign.
+              <h1 className="text-4xl md:text-5xl font-extrabold leading-[1.1] tracking-tight animate-fade-up delay-100">
+                Know your contract risks{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                  before you sign.
+                </span>
               </h1>
-              <p className="mt-5 text-base md:text-lg text-gray-600 leading-relaxed max-w-xl">
+              <p className="mt-5 text-base md:text-lg text-gray-600 leading-relaxed max-w-xl animate-fade-up delay-200">
                 ContractScan analyzes vendor agreements in under a minute, flags risky clauses,
                 and gives your team practical negotiation language.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-3 animate-fade-up delay-300">
                 <button
                   onClick={() => navigate('/auth')}
                   className="px-6 py-3 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors duration-150"
@@ -150,7 +155,13 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-7 animate-fade-up delay-100">
+            <div className="relative pt-24 xl:pt-28">
+              <img
+                src={contractHero}
+                alt="Contract hero visual"
+                className="hidden lg:block absolute top-6 xl:top-8 right-2 xl:right-4 w-[430px] xl:w-[520px] max-w-none h-auto object-contain opacity-100 animate-fade-up delay-200 pointer-events-none select-none z-20"
+              />
+              <div className="bg-white/85 backdrop-blur-md rounded-2xl p-6 md:p-7 ring-1 ring-gray-900/5 shadow-[0_20px_50px_-12px_rgba(37,99,235,0.15)] animate-fade-up delay-300 hero-float">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-5">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Sample Analysis</p>
@@ -173,6 +184,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
+            </div>
             </div>
           </div>
         </section>
@@ -197,7 +209,7 @@ export default function LandingPage() {
             {steps.map((item, idx) => (
               <div
                 key={item.title}
-                className="bg-white border border-gray-200 rounded-2xl p-5 animate-fade-up"
+                className="bg-white border border-gray-200 rounded-2xl p-5 animate-fade-up transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.15)] hover:border-blue-200"
                 style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <div className="w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center mb-4">
@@ -216,7 +228,7 @@ export default function LandingPage() {
             <p className="mt-2 text-gray-600">Built for company-wide governance and day-to-day execution.</p>
           </div>
           <div className="grid lg:grid-cols-2 gap-6">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 animate-fade-up">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 animate-fade-up transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.15)] hover:border-blue-200">
               <h3 className="text-lg font-bold text-gray-900 mb-1">For Companies</h3>
               <p className="text-sm text-gray-500 mb-5">Control, security, visibility, and predictable cost.</p>
               <div className="space-y-3">
@@ -229,7 +241,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 animate-fade-up delay-100">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 animate-fade-up delay-100 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.15)] hover:border-blue-200">
               <h3 className="text-lg font-bold text-gray-900 mb-1">For Users</h3>
               <p className="text-sm text-gray-500 mb-5">Fast, clear, and actionable insights for each contract.</p>
               <div className="space-y-3">
@@ -279,6 +291,26 @@ export default function LandingPage() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="max-w-6xl mx-auto px-6 pb-16">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-900 rounded-[2rem] text-white p-8 md:p-12">
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold tracking-[0.14em] uppercase text-blue-100">Final Call</p>
+              <h2 className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight">
+                Review every contract with confidence.
+              </h2>
+              <p className="mt-3 text-blue-100 leading-relaxed">
+                Bring legal-grade clarity to procurement decisions and move faster with less risk.
+              </p>
+              <button
+                onClick={() => navigate('/auth')}
+                className="mt-7 px-6 py-3 rounded-full bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50 transition-colors duration-150"
+              >
+                Start Free Trial
+              </button>
             </div>
           </div>
         </section>
@@ -349,7 +381,16 @@ export default function LandingPage() {
           animation: fadeUp 0.45s ease-out forwards;
           opacity: 0;
         }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .hero-float {
+          animation: float 3s ease-in-out infinite;
+        }
         .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
       `}</style>
     </div>
   )
