@@ -311,7 +311,7 @@ export default function AuthPage() {
           </p>
         </div>
 
-        <div className="hidden lg:flex bg-gradient-to-b from-blue-50 to-slate-100 text-slate-800 p-10 border-l border-slate-200 flex-col justify-between">
+        <div className="hidden lg:flex bg-linear-to-b from-blue-50 to-slate-100 text-slate-800 p-10 border-l border-slate-200 flex-col justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.15em] text-slate-500 font-semibold mb-4">
               Legal Operations Platform
@@ -327,7 +327,7 @@ export default function AuthPage() {
           <div className="space-y-3">
             {trustPoints.map((item) => (
               <div key={item} className="flex items-start gap-2.5 border border-blue-100 rounded-lg px-3.5 py-3 bg-white/70">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                 <p className="text-sm text-slate-700">{item}</p>
               </div>
             ))}

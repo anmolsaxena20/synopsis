@@ -296,7 +296,7 @@ export default function DashboardPage() {
               <div className="space-y-2">
                 {contract.redFlags.map((flag, i) => (
                   <div key={i} className="flex items-start gap-2.5 p-3 bg-red-50 border border-red-100 rounded-lg">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10"/>
                       <line x1="12" y1="8" x2="12" y2="12"/>
                       <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -373,7 +373,7 @@ export default function DashboardPage() {
                   <p className="text-sm font-semibold text-gray-900">{clause.clauseType}</p>
                   <p className="text-xs text-gray-400 truncate mt-0.5">{clause.extractedText}</p>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 group-hover:text-blue-500 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:text-blue-500 transition-colors">
                   <polyline points="9 18 15 12 9 6"/>
                 </svg>
               </div>
