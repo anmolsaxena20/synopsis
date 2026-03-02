@@ -7,6 +7,7 @@ from .services.analysis import analyze_contract
 
 load_dotenv()
 
+# the AI service itself does not need OpenAI; analysis.py handles the client.
 AI_SERVICE_URL = os.environ.get("AI_SERVICE_URL", "http://localhost:8000")
 
 app = FastAPI(title="AI Contract Analyzer")
