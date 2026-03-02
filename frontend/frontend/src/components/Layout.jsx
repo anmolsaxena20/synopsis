@@ -27,6 +27,13 @@ const Icons = {
       <polyline points="12 6 12 12 16 14"/>
     </svg>
   ),
+  Compare: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 3H5a2 2 0 00-2 2v14a2 2 0 002 2h5" />
+      <path d="M14 3h5a2 2 0 012 2v14a2 2 0 01-2 2h-5" />
+      <line x1="12" y1="3" x2="12" y2="21" />
+    </svg>
+  ),
   Team: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
@@ -59,6 +66,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard',        icon: Icons.Dashboard, to: '/app/dashboard' },
   { label: 'Upload Contract',  icon: Icons.Upload,    to: '/app/upload'    },
   { label: 'Contract History', icon: Icons.History,   to: '/app/history'   },
+  { label: 'Compare',          icon: Icons.Compare,   to: '/app/compare'   },
   { label: 'Team',             icon: Icons.Team,      to: '/app/team'      },
 ]
 
