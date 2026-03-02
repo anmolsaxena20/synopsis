@@ -184,7 +184,7 @@ export default function HistoryPage() {
               <div
                 key={contract.id}
                 className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-all duration-150 group cursor-pointer"
-                onClick={() => contract.status === 'DONE' && navigate(`/dashboard?id=${contract.id}`)}
+                onClick={() => contract.status === 'DONE' && navigate(`/app/dashboard?id=${contract.id}`)}
               >
                 <div className="col-span-4 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors duration-150">

@@ -26,16 +26,18 @@ async function inviteMember(req, res) {
     const { email } = req.body
 
     if (!email) return res.status(400).json({ error: 'Email is required' })
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail) return res.status(400).json({ error: 'Email is required' })
 
-    const existing = await prisma.user.findUnique({ where: { email } })
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (existing) return res.status(400).json({ error: 'A user with this email already exists' })
 
     const invited = await prisma.user.create({
       data: {
-        name: email.split('@')[0],
-        email,
+        name: normalizedEmail.split('@')[0],
+        email: normalizedEmail,
         passwordHash: 'INVITED',
-        role: 'MEMBER',
+        role: 'INVITED',
         companyId: req.user.companyId,
       },
       select: {
