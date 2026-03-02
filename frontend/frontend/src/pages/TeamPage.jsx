@@ -88,7 +88,7 @@ export default function TeamPage() {
     setInviting(true)
     try {
       await api.post('/team/invite', { email: inviteEmail.trim() })
-      setInviteSuccess(`Invite sent to ${inviteEmail}`)
+      setInviteSuccess(`Invite created for ${inviteEmail}. Ask them to sign up using this email.`)
       setInviteEmail('')
       await fetchMembers()
     } catch (err) {

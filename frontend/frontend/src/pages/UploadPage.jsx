@@ -66,7 +66,7 @@ export default function UploadPage() {
         contractValue: contractValue.trim() || null,
       })
 
-      navigate(`/dashboard?id=${contractRes.data.id}`)
+      navigate(`/app/dashboard?id=${contractRes.data.id}`)
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Upload failed. Please try again.')
       setProgress('idle')

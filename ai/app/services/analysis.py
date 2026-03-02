@@ -1,4 +1,4 @@
-from .models.schemas import AnalyzeRequest, AnalyzeResponse, ClauseResult
+from ..models.schemas import AnalyzeRequest, AnalyzeResponse, ClauseResult
 
 
 async def analyze_contract(request: AnalyzeRequest) -> AnalyzeResponse:

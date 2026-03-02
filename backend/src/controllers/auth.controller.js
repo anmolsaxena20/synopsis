@@ -18,14 +18,40 @@ function generateToken(user) {
 async function register(req, res) {
   try {
     const { companyName, domain, name, email, password } = req.body
+    const normalizedEmail = email?.trim().toLowerCase()
 
-    if (!companyName || !name || !email || !password) {
+    if (!companyName || !name || !normalizedEmail || !password) {
       return res.status(400).json({ error: 'All fields are required' })
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } })
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already in use' })
+      if (existingUser.passwordHash !== 'INVITED') {
+        return res.status(400).json({ error: 'Email already in use' })
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10)
+      const activated = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          name,
+          passwordHash,
+          role: 'MEMBER',
+        },
+      })
+
+      const token = generateToken(activated)
+
+      return res.status(200).json({
+        token,
+        user: {
+          id:        activated.id,
+          name:      activated.name,
+          email:     activated.email,
+          role:      activated.role,
+          companyId: activated.companyId,
+        },
+      })
     }
 
     const passwordHash = await bcrypt.hash(password, 10)
@@ -42,7 +68,7 @@ async function register(req, res) {
       const user = await tx.user.create({
         data: {
           name,
-          email,
+          email: normalizedEmail,
           passwordHash,
           role:      'ADMIN',
           companyId: company.id,
@@ -73,14 +99,19 @@ async function register(req, res) {
 async function login(req, res) {
   try {
     const { email, password } = req.body
+    const normalizedEmail = email?.trim().toLowerCase()
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' })
+    }
+
+    if (user.passwordHash === 'INVITED') {
+      return res.status(403).json({ error: 'Invitation pending. Complete sign up first.' })
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash)

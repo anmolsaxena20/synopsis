@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
@@ -16,6 +16,15 @@ const RISK = {
 function getRiskLevel(score) {
   if (score >= 66) return 'CRITICAL'
   if (score >= 31) return 'HIGH'
+  return 'LOW'
+}
+
+function normalizeRiskLevel(value) {
+  const raw = String(value || '').trim().toUpperCase()
+  if (raw.includes('CRIT')) return 'CRITICAL'
+  if (raw.includes('HIGH')) return 'HIGH'
+  if (raw.includes('MED')) return 'MEDIUM'
+  if (raw.includes('LOW')) return 'LOW'
   return 'LOW'
 }
 
@@ -70,7 +79,8 @@ function StatCard({ label, value, sub, color = 'text-gray-900' }) {
 
 function ClauseDrawer({ clause, onClose }) {
   if (!clause) return null
-  const c = RISK[clause.riskLevel] || RISK.LOW
+  const level = normalizeRiskLevel(clause.riskLevel)
+  const c = RISK[level] || RISK.LOW
   return (
     <>
       <div className="fixed inset-0 bg-black/25 z-20 backdrop-blur-sm" onClick={onClose} />
@@ -78,7 +88,7 @@ function ClauseDrawer({ clause, onClose }) {
         <div className={`px-6 py-5 border-b border-gray-100 ${c.bg}`}>
           <div className="flex items-start justify-between">
             <div>
-              <RiskBadge level={clause.riskLevel} />
+              <RiskBadge level={level} />
               <h3 className="text-lg font-bold text-gray-900 mt-2">{clause.clauseType}</h3>
             </div>
             <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/60 text-gray-400 hover:text-gray-700 transition-all">
@@ -143,6 +153,8 @@ export default function DashboardPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const contractId = searchParams.get('id')
+  const emptyDonePollsRef = useRef(0)
+  const MAX_EMPTY_DONE_POLLS = 10
 
   const [contract, setContract] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -153,14 +165,22 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!contractId) { setLoading(false); return }
+    emptyDonePollsRef.current = 0
     fetchContract()
   }, [contractId])
+
+  function hasClauseData(data) {
+    return Array.isArray(data?.clauses) && data.clauses.length > 0
+  }
 
   async function fetchContract() {
     try {
       const res = await api.get(`/contracts/${contractId}`)
       setContract(res.data)
       if (res.data.status === 'PROCESSING' || res.data.status === 'PENDING') {
+        setPolling(true)
+      } else if (res.data.status === 'DONE' && !hasClauseData(res.data)) {
+        // Sometimes DONE arrives before clause rows are persisted; keep polling briefly.
         setPolling(true)
       } else {
         setPolling(false)
@@ -174,9 +194,23 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!polling) return
     const interval = setInterval(async () => {
-      const res = await api.get(`/contracts/${contractId}`)
-      setContract(res.data)
-      if (res.data.status === 'DONE' || res.data.status === 'ERROR') {
+      try {
+        const res = await api.get(`/contracts/${contractId}`)
+        setContract(res.data)
+
+        if (res.data.status === 'PROCESSING' || res.data.status === 'PENDING') return
+
+        if (res.data.status === 'DONE' && !hasClauseData(res.data)) {
+          emptyDonePollsRef.current += 1
+          if (emptyDonePollsRef.current < MAX_EMPTY_DONE_POLLS) return
+        }
+
+        if (res.data.status === 'DONE' || res.data.status === 'ERROR') {
+          setPolling(false)
+          setLoading(false)
+          clearInterval(interval)
+        }
+      } catch {
         setPolling(false)
         setLoading(false)
         clearInterval(interval)
@@ -248,7 +282,10 @@ export default function DashboardPage() {
   const riskLevel = getRiskLevel(contract.overallRiskScore)
 
   const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 }
-  clauses.forEach(c => { if (counts[c.riskLevel] !== undefined) counts[c.riskLevel]++ })
+  clauses.forEach(c => {
+    const level = normalizeRiskLevel(c.riskLevel)
+    if (counts[level] !== undefined) counts[level]++
+  })
 
   const pieData = Object.entries(counts)
     .filter(([, v]) => v > 0)
@@ -257,11 +294,11 @@ export default function DashboardPage() {
   const barData = clauses.map(c => ({
     name: c.clauseType.length > 14 ? c.clauseType.slice(0, 14) + '…' : c.clauseType,
     fullName: c.clauseType,
-    risk: c.riskLevel,
-    fill: RISK[c.riskLevel]?.hex || '#9ca3af',
+    risk: normalizeRiskLevel(c.riskLevel),
+    fill: RISK[normalizeRiskLevel(c.riskLevel)]?.hex || '#9ca3af',
   }))
 
-  const filtered = clauses.filter(c => filterRisk === 'ALL' || c.riskLevel === filterRisk)
+  const filtered = clauses.filter(c => filterRisk === 'ALL' || normalizeRiskLevel(c.riskLevel) === filterRisk)
 
   return (
     <div className="space-y-5" style={{ animation: 'fadeIn 0.3s ease-out' }}>
@@ -432,7 +469,8 @@ export default function DashboardPage() {
             <div className="px-6 py-12 text-center text-sm text-gray-400">No clauses for this filter.</div>
           ) : (
             filtered.map((clause, i) => {
-              const c = RISK[clause.riskLevel] || RISK.LOW
+              const level = normalizeRiskLevel(clause.riskLevel)
+              const c = RISK[level] || RISK.LOW
               return (
                 <div
                   key={clause.id || i}
@@ -444,7 +482,7 @@ export default function DashboardPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1.5 flex-wrap">
                         <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{clause.clauseType}</p>
-                        <RiskBadge level={clause.riskLevel} />
+                        <RiskBadge level={level} />
                       </div>
                       <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{clause.extractedText}</p>
                       <p className="text-xs text-gray-400 mt-1.5 italic line-clamp-1">{clause.explanation}</p>
