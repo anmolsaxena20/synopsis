@@ -2,9 +2,11 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
-import api from '../api/axios'
 
+import api from '../api/axios'
+import { useCredits } from "../context/CreditContext"
 export default function UploadPage() {
+  const { credits, decreaseCredit } = useCredits()
   const navigate = useNavigate()
   const [file, setFile] = useState(null)
   const [vendorName, setVendorName] = useState('')
@@ -30,6 +32,10 @@ export default function UploadPage() {
   })
 
   async function handleUpload() {
+    if (credits <= 0) {
+        navigate('/app/billing')
+        return
+    }
     if (!file) { setError('Please select a PDF file.'); return }
     if (!vendorName.trim()) { setError('Vendor name is required.'); return }
     if (!contractTitle.trim()) { setError('Contract title is required.'); return }
@@ -66,7 +72,7 @@ export default function UploadPage() {
         contractTitle: contractTitle.trim(),
         contractValue: contractValue.trim() || null,
       })
-
+      decreaseCredit()
       navigate(`/dashboard?id=${contractRes.data.id}`)
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Upload failed. Please try again.')

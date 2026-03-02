@@ -7,7 +7,7 @@ import TeamPage from './pages/TeamPage'
 import Layout from './components/Layout'
 import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage'
-
+import BillingPage from './pages/BillingPage'
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token')
   if (!token) return <Navigate to="/auth" replace />
@@ -28,6 +28,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route path="billing" element={<BillingPage />} />
         <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="upload" element={<UploadPage />} />
