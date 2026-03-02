@@ -5,3 +5,8 @@ python-dotenv==1.0.1
 pdfminer.six==20231228
 pydantic==2.9.2
 python-multipart==0.0.12
+fastapi
+uvicorn
+pydantic
+python-dotenv
+openai
