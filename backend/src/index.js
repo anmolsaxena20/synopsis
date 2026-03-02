@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const authRoutes = require('./routes/auth.routes')
 const contractRoutes = require('./routes/contract.routes')
+const teamRoutes = require('./routes/team.routes')
 
 const app = express()
 
@@ -16,8 +17,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/contracts', contractRoutes)
-
-
+app.use('/api/team', teamRoutes)
 
 
 app.use((req, res) => {
