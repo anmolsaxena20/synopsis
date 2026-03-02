@@ -26,7 +26,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+def _build_client() -> AsyncOpenAI:
+    groq_key = (os.getenv("GROQ_API_KEY") or "").strip().strip('"').strip("'")
+    openai_key = (os.getenv("OPENAI_API_KEY") or "").strip().strip('"').strip("'")
+
+    if groq_key:
+        return AsyncOpenAI(
+            api_key=groq_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
+    if openai_key:
+        return AsyncOpenAI(api_key=openai_key)
+    raise RuntimeError("Missing API key. Set GROQ_API_KEY or OPENAI_API_KEY.")
+
+
+def _model_name() -> str:
+    default_model = "llama-3.3-70b-versatile" if os.getenv("GROQ_API_KEY") else "gpt-4o"
+    return os.getenv("MODEL", default_model)
+
+
+client = _build_client()
 
 MAX_CHARS = 80_000  # ~20k tokens; GPT-4o context window is 128k
 
@@ -121,7 +140,7 @@ async def analyze_contract(req: AnalyzeRequest):
 
     try:
         response = await client.chat.completions.create(
-            model=os.getenv("MODEL", "gpt-4o"),
+            model=_model_name(),
             response_format={"type": "json_object"},
             temperature=0.1,
             max_tokens=int(os.getenv("MAX_TOKENS", 4000)),
@@ -149,7 +168,7 @@ async def analyze_contract(req: AnalyzeRequest):
             logger.info("Retrying with JSON reminder...")
             retry_prompt = user_prompt + "\n\nCRITICAL: Your last response was not valid JSON. Return ONLY the JSON object — no text before or after."
             response = await client.chat.completions.create(
-                model=os.getenv("MODEL", "gpt-4o"),
+                model=_model_name(),
                 response_format={"type": "json_object"},
                 temperature=0.0,
                 max_tokens=int(os.getenv("MAX_TOKENS", 4000)),
@@ -178,6 +197,6 @@ async def health():
     """Lightweight health check used by Node backend and Render.com."""
     return {
         "status": "ok",
-        "model": os.getenv("MODEL", "gpt-4o"),
+        "model": _model_name(),
         "max_tokens": int(os.getenv("MAX_TOKENS", 4000)),
     }
